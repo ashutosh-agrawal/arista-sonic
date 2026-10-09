@@ -62,7 +62,7 @@ class DBHelper(object):
       self._ents = {}
       self.namespace = namespace
 
-   def _get_db(self, name):
+   def _get_db(self, name, use_tcp=True):
       db = self._dbs.get(name)
       if db is None:
          # pylint: disable=import-error,import-outside-toplevel
@@ -71,7 +71,7 @@ class DBHelper(object):
             # For multi-asic, need to load sonic global config manually.
             if not SonicDBConfig.isGlobalInit():
                SonicDBConfig.load_sonic_global_db_config()
-         db = DBConnector(name, 0, True, self.namespace)
+         db = DBConnector(name, 0, use_tcp, self.namespace)
          self._dbs[name] = db
       return db
 
@@ -85,7 +85,7 @@ class DBHelper(object):
 
    @cached_property
    def _state_db(self):
-      return self._get_db('STATE_DB')
+      return self._get_db('STATE_DB', use_tcp=False)
 
    @cached_property
    def _chassis_state_db(self):
